@@ -8,14 +8,15 @@ module.exports = {
   networks: {
     development: {
       host: "127.0.0.1",
+      port: 8545,
+      network_id: "3",
+      from: "0xc9b40b0d681e39d9df57222380375a5d4c7aba1f"
+    },
+    test: {
+      host: "127.0.0.1",
       port: 7545,
       network_id: "5777"
-    },
-  //  test: {
-  //    host: "127.0.0.1",
-  //    port: 7545,
-  //    network_id: "*"
-  //  }
+    }
   }
   //
 };
