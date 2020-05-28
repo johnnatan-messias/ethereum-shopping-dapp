@@ -12,6 +12,7 @@ contract SBCoin {
     // Balances are in cent unit
     mapping(address => uint256) private balances;
     address private minter;
+    uint256 private _totalSupply;
 
     /// Access modifier for minter-only functionality
     modifier onlyMinter() {
@@ -27,7 +28,8 @@ contract SBCoin {
         minter = msg.sender;
         // 1 SB-coin = 100 cents
         // There are 10 billion SB-coins in total
-        balances[msg.sender] = 1000000000000;
+        _totalSupply = 1000000000000;
+        balances[msg.sender] = _totalSupply;
     }
 
     function mintCoin(address receiver, uint256 amount) public onlyMinter {
@@ -36,6 +38,10 @@ contract SBCoin {
     }
 
     function sendCoin(address receiver, uint256 amount) public {
+        require(
+            msg.sender != receiver,
+            "Sending money to the same account is not allowed!"
+        );
         require(
             balances[msg.sender] >= amount,
             "Account does not have sufficient balance!"
@@ -51,5 +57,9 @@ contract SBCoin {
 
     function getBalanceInEth(address addr) public view returns (uint256) {
         return ConvertLib.convert(getBalance(addr), 2);
+    }
+
+    function totalSupply() public view returns (uint256) {
+        return _totalSupply;
     }
 }

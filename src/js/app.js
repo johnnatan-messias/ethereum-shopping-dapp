@@ -6,14 +6,15 @@ window.addEventListener('load', async () => {
         // Request account access if needed
         await ethereum.enable();
         // Acccounts now exposed
-        console.log('accounts', web3.eth.accounts)
-        console.log('coinbase', web3.eth.coinbase)
-        console.log('net_version', web3.version.network)
-        contract = get_deployed_contract()
-        console.log('contract', contract)
-        load_table()
+        console.log('accounts', web3.eth.accounts);
+        console.log('coinbase', web3.eth.coinbase);
+        console.log('net_version', web3.version.network);
+        contract = get_deployed_contract();
+        console.log('contract', contract);
+        load_table();
         //web3.eth.sendTransaction({/* ... */});
       } catch (error) {
+          alert(error);
         // User denied account access...
       }
     }
@@ -44,9 +45,8 @@ function connect_to_blockchain2() {
 
 function get_deployed_contract() {
     var contract_address = "0x6626f2422096E6C05a9513446e3C5D94cdE79A36";
-    var contract = new web3.eth.Contract(contract_abi, contract_address)
+    var contract = new web3.eth.Contract(contract_abi, contract_address);
     return contract;
-
 }
 
 function load_table() {
@@ -80,7 +80,7 @@ $(document).on('click', '#pay-button', function () {
     var to_account = $("#pay-to-account").text()
     console.log('to-account', to_account)
     console.log("from_account", from_account)
-    /*
+    
     contract.methods.sendCoin("0x2c892f27Da5B175B44772E97dBebEC9308ee38E2", 40050).send(
         { from: from_account }
     )
@@ -96,7 +96,6 @@ $(document).on('click', '#pay-button', function () {
         .on('error', function (error, receipt) {
             console.log("error", error)
         });
-        */
         
     load_table()
 
