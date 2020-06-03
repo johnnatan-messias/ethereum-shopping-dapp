@@ -45,6 +45,7 @@ function connect_to_blockchain2() {
 
 function get_deployed_contract() {
     var contract_address = "0x6626f2422096E6C05a9513446e3C5D94cdE79A36";
+    //var contract_address = "0x6626f2422096E6C05a9513446e3C5D94cdE79A36";
     //var Contract = web3.eth.contract(contract_abi);
     //var contract_instance = Contract.at(contract_address);
     //console.log('contract', contract_instance);
@@ -67,6 +68,27 @@ function update_balance() {
         });
 }
 
+function waitForReceipt(hash, cb) {
+    web3.eth.getTransactionReceipt(hash, function (err, receipt) {
+        if (err) {
+            error(err);
+        }
+
+        if (receipt !== null) {
+            // Transaction went through
+            update_balance();
+            if (cb) {
+                cb(receipt);
+            }
+        } else {
+            // Try again in 1 second
+            window.setTimeout(function () {
+                waitForReceipt(hash, cb);
+            }, 1000);
+        }
+    });
+}
+
 $(document).on('click', '#pay-for-product', function () {
     var from_account = web3.eth.accounts[0];
     var to_account = "0x2c892f27Da5B175B44772E97dBebEC9308ee38E2";
@@ -74,34 +96,22 @@ $(document).on('click', '#pay-for-product', function () {
     console.log("from_account", from_account);
     var value = $(this).attr("value");
     var value_sbc = eur_to_sbc(value);
-    console.log(value_sbc);
-    console.log(contract_instance.sendCoin)
-    contract_instance.sendCoin.sendTransaction.call({ from: from_account }, to_account, value_sbc,
-        function (error, result) {
-            if (error)
-                console.log('err', err);
-            console.log('result', result)
-            alert("Transaction ID: " + result)
-        });
 
-    /*
-    contract_instance.sendCoin(to_account, value_sbc).send(
-        { from: from_account }
-    )
-        .on('transactionHash', function (hash) {
-            console.log("transactionHash", hash)
-        })
-        .on('receipt', function (receipt) {
-            console.log("receipt", receipt)
-        })
-        .on('confirmation', function (confirmationNumber, receipt) {
-            console.log("confirmation", confirmationNumber, receipt)
-        })
-        .on('error', function (error, receipt) {
-            console.log("error", error)
+    contract_instance.sendCoin.sendTransaction.call({ from: from_account }, to_account, value_sbc,
+        function (error, txid) {
+            if (error) {
+                console.log('error', error);
+                alert("Transaction error");
+            }
+            else {
+                console.log('txid', txid)
+                alert("Transaction ID: " + txid)
+                waitForReceipt(txid, function (receipt) {
+                    console.log('Receipt', receipt);
+                    alert("Transaction confirmed and included in block " + receipt.blockNumber)
+                });
+            }
         });
-    */
-    update_balance();
 });
 
 
