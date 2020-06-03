@@ -83,4 +83,23 @@ contract('SBCoin', (accounts) => {
 
   })
 
+  it('should buy the product with a productId=1', async () => {
+    const sbCoinInstance = await SBCoin.deployed();
+    await sbCoinInstance.buyProduct(1);
+    const product = await sbCoinInstance.getOwnedProduct(0);
+    const flag = product[0].toNumber() === 1 && product[1].toNumber() === 1 && product[2] === "Meat" && product[3] === "Red meat" && product[4].toNumber() === 2000;
+    assert(flag, 'The product bought differs from what we are expecting.');
+  });
+
+  it('should buy a product and decrease its value from the user account balance', async () => {
+    const sbCoinInstance = await SBCoin.deployed();
+    const accountBalanceBefore = (await sbCoinInstance.getMyBalance()).toNumber();
+    await sbCoinInstance.buyProduct(1);
+    const accountBalanceAfter = (await sbCoinInstance.getMyBalance()).toNumber();
+    const product = await sbCoinInstance.getOwnedProduct(0);
+    //console.log(product[0].toNumber(), product[1].toNumber(), product[2], product[3], product[4].toNumber());
+    //console.log(accountBalanceAfter, accountBalanceBefore, product[4].toNumber());
+    assert.equal(accountBalanceAfter, accountBalanceBefore - product[4].toNumber(), 'The account balance is not correct.');
+  });
+
 });

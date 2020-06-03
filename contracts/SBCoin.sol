@@ -146,7 +146,7 @@ contract SBCoin {
     }
 
     //To test
-    function buyProduct(uint24 id) public productExists(id){
+    function buyProduct(uint24 id) public productExists(id) {
         Product memory product = availableProducts[id];
         sendCoin(storeAddress, product.priceInSBC);
         productsOwned[msg.sender].push(product);
@@ -157,6 +157,27 @@ contract SBCoin {
         Product memory product = productsOwned[msg.sender][productIndex];
         delete productsOwned[msg.sender][productIndex];
         productsOwned[receiver].push(product);
+    }
+
+    function getOwnedProduct(uint24 productIndex)
+        public
+        view
+        returns (
+            uint24,
+            uint24,
+            string memory,
+            string memory,
+            uint256
+        )
+    {
+        Product memory product = productsOwned[msg.sender][productIndex];
+        return (
+            product.id,
+            product.categoryId,
+            product.categoryName,
+            product.name,
+            product.priceInSBC
+        );
     }
 
     function create_products() private {
