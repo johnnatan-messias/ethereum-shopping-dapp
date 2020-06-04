@@ -1,11 +1,11 @@
 const SBCoin = artifacts.require("SBCoin");
 
 contract('SBCoin', (accounts) => {
-  it('should put 1000000000000 SBCoin in the first account', async () => {
+  it('should put 10000000000 SBCoin in the first account', async () => {
     const sbCoinInstance = await SBCoin.deployed();
     const balance = await sbCoinInstance.balanceOf.call(accounts[0]);
 
-    assert.equal(balance.valueOf(), 1000000000000, "1000000000000 wasn't in the first account");
+    assert.equal(balance.valueOf(), 10000000000, "10000000000 wasn't in the first account");
   });
 
   it('should call a function that depends on a linked library', async () => {
@@ -16,17 +16,17 @@ contract('SBCoin', (accounts) => {
     assert.equal(sbCoinEthBalance, 2 * sbCoinBalance, 'Library function returned unexpected function, linkage may be broken');
   });
 
-  it('should call the function convertToEuro on a linked library correctly', async () => {
+  it('should call the function convertToEth on a linked library correctly', async () => {
     const sbCoinInstance = await SBCoin.deployed();
     const sbCoinBalance = (await sbCoinInstance.balanceOf.call(accounts[0])).toNumber();
-    const sbCoinInEuro = (await sbCoinInstance.balanceOfInEuro.call(accounts[0])).toNumber();
-    assert.equal(sbCoinInEuro, sbCoinBalance / 100), 'Function returned unexpected value in Euro';
+    const sbCoinInEth = (await sbCoinInstance.balanceOfInEth.call(accounts[0])).toNumber();
+    assert.equal(sbCoinInEth, sbCoinBalance * 2), 'Function returned unexpected value in Ethereum';
   });
 
-  it('should return 1000000000000 as the total coin supply', async () => {
+  it('should return 10000000000 as the total coin supply', async () => {
     const sbCoinInstance = await SBCoin.deployed();
     const totalSupply = (await sbCoinInstance.totalSupply.call()).toNumber();
-    assert.equal(totalSupply, 1000000000000, 'The expected total supply does not match.');
+    assert.equal(totalSupply, 10000000000, 'The expected total supply does not match.');
   });
 
   it('should send coin correctly', async () => {
@@ -76,9 +76,9 @@ contract('SBCoin', (accounts) => {
 
   it('should add a product with ID=21; categoryId=1; categoryName=Fruits; name=Pear; priceInSBC=50000', async () => {
     const sbCoinInstance = await SBCoin.deployed();
-    await sbCoinInstance.addProduct(21, 1, "Fruits", "Pear", 50000);
+    await sbCoinInstance.addProduct(21, 1, "Fruits", "Pear", 40);
     const product = await sbCoinInstance.getProductById(21);
-    const flag = product[0].toNumber() === 21 && product[1].toNumber() === 1 && product[2] === "Fruits" && product[3] === "Pear" && product[4].toNumber() === 50000;
+    const flag = product[0].toNumber() === 21 && product[1].toNumber() === 1 && product[2] === "Fruits" && product[3] === "Pear" && product[4].toNumber() === 40;
     assert(flag, 'Product registered differs from the one we are expecting.');
   });
 
@@ -86,7 +86,7 @@ contract('SBCoin', (accounts) => {
     const sbCoinInstance = await SBCoin.deployed();
     await sbCoinInstance.buyProduct(1);
     const product = await sbCoinInstance.getOwnedProduct(0);
-    const flag = product[0].toNumber() === 1 && product[1].toNumber() === 1 && product[2] === "Meat" && product[3] === "Red meat" && product[4].toNumber() === 2000;
+    const flag = product[0].toNumber() === 1 && product[1].toNumber() === 1 && product[2] === "Meat" && product[3] === "Red meat" && product[4].toNumber() === 20;
     assert(flag, 'The product bought differs from what we are expecting.');
   });
 

@@ -116,9 +116,9 @@ $(document).on('click', '#pay-for-product', function () {
 
 
 function sbc_to_eur(sbc) {
-    return (sbc / 100).toFixed(2);
+    return sbc.toFixed(2);
 }
 
 function eur_to_sbc(eur) {
-    return parseInt(eur * 100)
+    return parseFloat(eur).toFixed(2);
 }
