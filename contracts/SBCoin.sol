@@ -13,6 +13,7 @@ contract SBCoin {
     string private _name;
     string private _symbol;
     uint8 private _decimals;
+    uint256 private _totalSupply;
 
     struct Product {
         uint24 id;
@@ -29,7 +30,6 @@ contract SBCoin {
     mapping(address => uint256) private balances;
 
     address private minter;
-    uint256 private _totalSupply = 1000000000000;
 
     //Product[] private availableProducts;
     mapping(uint24 => Product) private availableProducts;
@@ -62,8 +62,10 @@ contract SBCoin {
 
     constructor() public {
         minter = msg.sender;
-        // 100 SB-coin = 1 Euro
+        // 100 sb = 1 Euro
         // There are 10 billion Euro worth in SB-coins in total
+        // 1SBC = 1 Euro
+        _totalSupply = 1000000000000;
         balances[msg.sender] = _totalSupply;
         _name = "Saarbrücken Coin";
         _symbol = "SBC";
