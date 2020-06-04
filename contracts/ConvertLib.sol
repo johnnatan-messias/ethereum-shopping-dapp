@@ -9,4 +9,12 @@ library ConvertLib {
     {
         return amount * conversionRate;
     }
+
+    function convertToEuro(uint256 amount) public pure returns (uint256) {
+        return amount / 100;
+    }
+
+    function convertToSBC(uint256 amount) public pure returns (uint256) {
+        return amount * 100;
+    }
 }
