@@ -102,4 +102,42 @@ contract('SBCoin', (accounts) => {
     assert.equal(accountBalanceAfter, accountBalanceBefore - product[4].toNumber(), 'The account balance is not correct.');
   });
 
+  it('should test whether the inicial store adress is 0x2c892f27Da5B175B44772E97dBebEC9308ee38E2', async () => {
+    const sbCoinInstance = await SBCoin.deployed();
+    const storeAddress = await sbCoinInstance.getStoreAddress();
+    assert.equal(storeAddress, 0x2c892f27Da5B175B44772E97dBebEC9308ee38E2, 'The store address differs from what we are expecting.')
+  });
+
+  it('should test whether the store address was changed successfully to 0x1035Ef555d2d1099b6D5e42A41c0F74890c5C445', async () => {
+    const sbCoinInstance = await SBCoin.deployed();
+    await sbCoinInstance.changeStoreAddress("0x1035Ef555d2d1099b6D5e42A41c0F74890c5C445");
+    const newStoreAddress = await sbCoinInstance.getStoreAddress();
+    assert.equal(newStoreAddress, 0x1035Ef555d2d1099b6D5e42A41c0F74890c5C445, 'The store address differs from what we are expecting.');
+  });
+
+  it('should test the amount of owned products', async () => {
+    const sbCoinInstance = await SBCoin.deployed();
+    const accountBalanceBefore = (await sbCoinInstance.getMyBalance()).toNumber();
+    const currTotalOwnedProducts = (await sbCoinInstance.getTotalOwnedProducts()).toNumber();
+    await sbCoinInstance.buyProduct(1);
+    await sbCoinInstance.buyProduct(2);
+    await sbCoinInstance.buyProduct(3);
+    await sbCoinInstance.buyProduct(4);
+    const totalOwnedProducts = (await sbCoinInstance.getTotalOwnedProducts()).toNumber();
+    assert(totalOwnedProducts, currTotalOwnedProducts + 4, 'The total amount of owned products differs from what we are expecting.');
+  });
+
+  it('should donate an owned product to another account address', async () => {
+    const sbCoinInstance = await SBCoin.deployed();
+    const totalOwnedProductsBefore = (await sbCoinInstance.getTotalOwnedProducts({ from: accounts[1] })).toNumber();
+    await sbCoinInstance.buyProduct(1);
+    await sbCoinInstance.buyProduct(2);
+    await sbCoinInstance.buyProduct(3);
+    await sbCoinInstance.donateProduct(accounts[1], 0);
+    await sbCoinInstance.donateProduct(accounts[1], 1);
+    await sbCoinInstance.donateProduct(accounts[1], 2);
+    const totalOwnedProductsAfter = (await sbCoinInstance.getTotalOwnedProducts({ from: accounts[1] })).toNumber();
+    assert(totalOwnedProductsAfter, totalOwnedProductsBefore + 3, 'The amount of donated products differs from what we are expecting.')
+  });
+
 });

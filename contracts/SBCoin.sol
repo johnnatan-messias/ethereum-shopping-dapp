@@ -32,13 +32,21 @@ contract SBCoin {
     modifier onlyMinter() {
         require(
             msg.sender == minter,
-            "Only the minter can access this functionality"
+            "Only the minter can access this functionality!"
         );
         _;
     }
 
     modifier productExists(uint24 id) {
         require(availableProducts[id].id != 0, "Product does not exist!");
+        _;
+    }
+
+    modifier onlyStoreOrMinter() {
+        require(
+            msg.sender == minter || msg.sender == storeAddress,
+            "Only minter or store address owner can access this functionality!"
+        );
         _;
     }
 
@@ -93,6 +101,14 @@ contract SBCoin {
         return _totalSupply;
     }
 
+    function getStoreAddress() public view returns (address) {
+        return storeAddress;
+    }
+
+    function changeStoreAddress(address addr) public onlyStoreOrMinter {
+        storeAddress = addr;
+    }
+
     function addProduct(
         uint24 id,
         uint24 categoryId,
@@ -145,18 +161,20 @@ contract SBCoin {
         return totalAvailableProducts;
     }
 
-    //To test
     function buyProduct(uint24 id) public productExists(id) {
         Product memory product = availableProducts[id];
         sendCoin(storeAddress, product.priceInSBC);
         productsOwned[msg.sender].push(product);
     }
 
-    //To test -- implement testing whether this person has the product
     function donateProduct(address receiver, uint24 productIndex) public {
         Product memory product = productsOwned[msg.sender][productIndex];
         delete productsOwned[msg.sender][productIndex];
         productsOwned[receiver].push(product);
+    }
+
+    function getTotalOwnedProducts() public view returns (uint256) {
+        return productsOwned[msg.sender].length;
     }
 
     function getOwnedProduct(uint24 productIndex)
