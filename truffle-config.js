@@ -6,11 +6,11 @@ module.exports = {
   // for more details on how to specify configuration options!
   //
   networks: {
-    development: {
+    ropsten: {
       host: "127.0.0.1",
       port: 8545,
       network_id: "3",
-      from: "0xc9b40b0d681e39d9df57222380375a5d4c7aba1f"
+      from: "0x2c892f27Da5B175B44772E97dBebEC9308ee38E2"
     },
     test: {
       host: "127.0.0.1",

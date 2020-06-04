@@ -12,7 +12,7 @@ contract TestSBCoin {
         uint256 expected = 1000000000000;
 
         Assert.equal(
-            sbCoin.getBalance(msg.sender),
+            sbCoin.balanceOf(msg.sender),
             expected,
             "Owner should have 1000000000000 SBCoin initially"
         );

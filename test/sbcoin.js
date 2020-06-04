@@ -3,23 +3,23 @@ const SBCoin = artifacts.require("SBCoin");
 contract('SBCoin', (accounts) => {
   it('should put 1000000000000 SBCoin in the first account', async () => {
     const sbCoinInstance = await SBCoin.deployed();
-    const balance = await sbCoinInstance.getBalance.call(accounts[0]);
+    const balance = await sbCoinInstance.balanceOf.call(accounts[0]);
 
     assert.equal(balance.valueOf(), 1000000000000, "1000000000000 wasn't in the first account");
   });
 
   it('should call a function that depends on a linked library', async () => {
     const sbCoinInstance = await SBCoin.deployed();
-    const sbCoinBalance = (await sbCoinInstance.getBalance.call(accounts[0])).toNumber();
-    const sbCoinEthBalance = (await sbCoinInstance.getBalanceInEth.call(accounts[0])).toNumber();
+    const sbCoinBalance = (await sbCoinInstance.balanceOf.call(accounts[0])).toNumber();
+    const sbCoinEthBalance = (await sbCoinInstance.balanceOfInEth.call(accounts[0])).toNumber();
 
     assert.equal(sbCoinEthBalance, 2 * sbCoinBalance, 'Library function returned unexpected function, linkage may be broken');
   });
 
   it('should call the function convertToEuro on a linked library correctly', async () => {
     const sbCoinInstance = await SBCoin.deployed();
-    const sbCoinBalance = (await sbCoinInstance.getBalance.call(accounts[0])).toNumber();
-    const sbCoinInEuro = (await sbCoinInstance.getBalanceInEuro.call(accounts[0])).toNumber();
+    const sbCoinBalance = (await sbCoinInstance.balanceOf.call(accounts[0])).toNumber();
+    const sbCoinInEuro = (await sbCoinInstance.balanceOfInEuro.call(accounts[0])).toNumber();
     assert.equal(sbCoinInEuro, sbCoinBalance / 100), 'Function returned unexpected value in Euro';
   });
 
@@ -37,16 +37,16 @@ contract('SBCoin', (accounts) => {
     const accountTwo = accounts[1];
 
     // Get initial balances of first and second account.
-    const accountOneStartingBalance = (await sbCoinInstance.getBalance.call(accountOne)).toNumber();
-    const accountTwoStartingBalance = (await sbCoinInstance.getBalance.call(accountTwo)).toNumber();
+    const accountOneStartingBalance = (await sbCoinInstance.balanceOf.call(accountOne)).toNumber();
+    const accountTwoStartingBalance = (await sbCoinInstance.balanceOf.call(accountTwo)).toNumber();
 
     // Make transaction from first account to second.
     const amount = 1000;
-    await sbCoinInstance.sendCoin(accountTwo, amount, { from: accountOne });
+    await sbCoinInstance.transfer(accountTwo, amount, { from: accountOne });
 
     // Get balances of first and second account after the transactions.
-    const accountOneEndingBalance = (await sbCoinInstance.getBalance.call(accountOne)).toNumber();
-    const accountTwoEndingBalance = (await sbCoinInstance.getBalance.call(accountTwo)).toNumber();
+    const accountOneEndingBalance = (await sbCoinInstance.balanceOf.call(accountOne)).toNumber();
+    const accountTwoEndingBalance = (await sbCoinInstance.balanceOf.call(accountTwo)).toNumber();
 
     assert.equal(accountOneEndingBalance, accountOneStartingBalance - amount, "Amount wasn't correctly taken from the sender");
     assert.equal(accountTwoEndingBalance, accountTwoStartingBalance + amount, "Amount wasn't correctly sent to the receiver");
@@ -92,9 +92,9 @@ contract('SBCoin', (accounts) => {
 
   it('should buy a product and decrease its value from the user account balance', async () => {
     const sbCoinInstance = await SBCoin.deployed();
-    const accountBalanceBefore = (await sbCoinInstance.getMyBalance()).toNumber();
+    const accountBalanceBefore = (await sbCoinInstance.balanceOfMe()).toNumber();
     await sbCoinInstance.buyProduct(1);
-    const accountBalanceAfter = (await sbCoinInstance.getMyBalance()).toNumber();
+    const accountBalanceAfter = (await sbCoinInstance.balanceOfMe()).toNumber();
     const product = await sbCoinInstance.getOwnedProduct(0);
     //console.log(product[0].toNumber(), product[1].toNumber(), product[2], product[3], product[4].toNumber());
     //console.log(accountBalanceAfter, accountBalanceBefore, product[4].toNumber());
@@ -116,7 +116,7 @@ contract('SBCoin', (accounts) => {
 
   it('should test the amount of owned products', async () => {
     const sbCoinInstance = await SBCoin.deployed();
-    const accountBalanceBefore = (await sbCoinInstance.getMyBalance()).toNumber();
+    const accountBalanceBefore = (await sbCoinInstance.balanceOfMe()).toNumber();
     const currTotalOwnedProducts = (await sbCoinInstance.getTotalOwnedProducts()).toNumber();
     await sbCoinInstance.buyProduct(1);
     await sbCoinInstance.buyProduct(2);

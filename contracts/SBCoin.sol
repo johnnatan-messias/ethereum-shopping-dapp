@@ -3,12 +3,22 @@ pragma solidity >=0.4.25 <0.7.0;
 import "./ConvertLib.sol";
 
 
+/*
+   function transferFrom(address _from, address _to, uint _value) returns (bool success);
+   function approve(address _spender, uint _value) returns (bool success);
+   function allowance(address _owner, address _spender) constant returns (uint remaining);
+   event Approval(address indexed _owner, address indexed _spender, uint _value);
+*/
 contract SBCoin {
+    string private _name;
+    string private _symbol;
+    uint8 private _decimals;
+
     struct Product {
         uint24 id;
         uint24 categoryId;
         string categoryName;
-        string name;
+        string productName;
         uint256 priceInSBC;
     }
 
@@ -55,7 +65,45 @@ contract SBCoin {
         // 100 SB-coin = 1 Euro
         // There are 10 billion Euro worth in SB-coins in total
         balances[msg.sender] = _totalSupply;
+        _name = "Saarbrücken Coin";
+        _symbol = "SBC";
+        _decimals = 2;
         create_products();
+    }
+
+    /**
+     * @dev See {IERC20-name}.
+     */
+    function name() public view returns (string memory) {
+        return _name;
+    }
+
+    /**
+     * @dev See {IERC20-symbol}.
+     */
+    function symbol() public view returns (string memory) {
+        return _symbol;
+    }
+
+    /**
+     * @dev See {IERC20-decimals}.
+     */
+    function decimals() public view returns (uint8) {
+        return _decimals;
+    }
+
+    /**
+     * @dev See {IERC20-totalSupply}.
+     */
+    function totalSupply() public view returns (uint256) {
+        return _totalSupply;
+    }
+
+    /**
+     * @dev See {IERC20-balanceOf}.
+     */
+    function balanceOf(address account) public view returns (uint256) {
+        return balances[account];
     }
 
     /*
@@ -65,8 +113,10 @@ contract SBCoin {
         _totalSupply += amount;
     }
     */
-
-    function sendCoin(address receiver, uint256 amount) public {
+    /**
+     * @dev See {IERC20-transfer}.
+     */
+    function transfer(address receiver, uint256 amount) public returns (bool) {
         require(amount > 0, "Transfer of 0 coins is not allowed!");
         require(
             msg.sender != receiver,
@@ -79,26 +129,19 @@ contract SBCoin {
         balances[msg.sender] -= amount;
         balances[receiver] += amount;
         emit Transfer(msg.sender, receiver, amount);
+        return true;
     }
 
-    function getBalance(address addr) public view returns (uint256) {
-        return balances[addr];
-    }
-
-    function getMyBalance() public view returns (uint256) {
+    function balanceOfMe() public view returns (uint256) {
         return balances[msg.sender];
     }
 
-    function getBalanceInEth(address addr) public view returns (uint256) {
-        return ConvertLib.convert(getBalance(addr), 2);
+    function balanceOfInEth(address addr) public view returns (uint256) {
+        return ConvertLib.convert(balanceOf(addr), 2);
     }
 
-    function getBalanceInEuro(address addr) public view returns (uint256) {
-        return ConvertLib.convertToEuro(getBalance(addr));
-    }
-
-    function totalSupply() public view returns (uint256) {
-        return _totalSupply;
+    function balanceOfInEuro(address addr) public view returns (uint256) {
+        return ConvertLib.convertToEuro(balanceOf(addr));
     }
 
     function getStoreAddress() public view returns (address) {
@@ -113,7 +156,7 @@ contract SBCoin {
         uint24 id,
         uint24 categoryId,
         string memory categoryName,
-        string memory name,
+        string memory productName,
         uint256 priceInSBC
     ) public onlyMinter {
         require(
@@ -124,7 +167,7 @@ contract SBCoin {
             id: id,
             categoryId: categoryId,
             categoryName: categoryName,
-            name: name,
+            productName: productName,
             priceInSBC: priceInSBC
         });
         totalAvailableProducts += 1;
@@ -152,7 +195,7 @@ contract SBCoin {
             product.id,
             product.categoryId,
             product.categoryName,
-            product.name,
+            product.productName,
             product.priceInSBC
         );
     }
@@ -163,7 +206,7 @@ contract SBCoin {
 
     function buyProduct(uint24 id) public productExists(id) {
         Product memory product = availableProducts[id];
-        sendCoin(storeAddress, product.priceInSBC);
+        transfer(storeAddress, product.priceInSBC);
         productsOwned[msg.sender].push(product);
     }
 
@@ -193,7 +236,7 @@ contract SBCoin {
             product.id,
             product.categoryId,
             product.categoryName,
-            product.name,
+            product.productName,
             product.priceInSBC
         );
     }
@@ -203,112 +246,112 @@ contract SBCoin {
             id: 1,
             categoryId: 1,
             categoryName: "Meat",
-            name: "Red meat",
+            productName: "Red meat",
             priceInSBC: 2000
         });
         addProduct({
             id: 2,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Banana",
+            productName: "Banana",
             priceInSBC: 300
         });
         addProduct({
             id: 3,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Guaba",
+            productName: "Guaba",
             priceInSBC: 500
         });
         addProduct({
             id: 4,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Grapes",
+            productName: "Grapes",
             priceInSBC: 1500
         });
         addProduct({
             id: 5,
             categoryId: 3,
             categoryName: "Fastfood",
-            name: "Double cheeseburguer",
+            productName: "Double cheeseburguer",
             priceInSBC: 2500
         });
         addProduct({
             id: 6,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Mango",
+            productName: "Mango",
             priceInSBC: 1500
         });
         addProduct({
             id: 7,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Watermelon",
+            productName: "Watermelon",
             priceInSBC: 1000
         });
         addProduct({
             id: 8,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Apple",
+            productName: "Apple",
             priceInSBC: 1100
         });
         addProduct({
             id: 9,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Cale owoce",
+            productName: "Cale owoce",
             priceInSBC: 800
         });
         addProduct({
             id: 10,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Fried chicken drumsticks",
+            productName: "Fried chicken drumsticks",
             priceInSBC: 1000
         });
         addProduct({
             id: 11,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Orange juice",
+            productName: "Orange juice",
             priceInSBC: 400
         });
         addProduct({
             id: 12,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Mixed fruit pack",
+            productName: "Mixed fruit pack",
             priceInSBC: 2500
         });
         addProduct({
             id: 13,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Oranges",
+            productName: "Oranges",
             priceInSBC: 600
         });
         addProduct({
             id: 14,
             categoryId: 2,
             categoryName: "Vegetables",
-            name: "Cabbage",
+            productName: "Cabbage",
             priceInSBC: 300
         });
         addProduct({
             id: 15,
             categoryId: 2,
             categoryName: "Vegetables",
-            name: "Bell pepper",
+            productName: "Bell pepper",
             priceInSBC: 400
         });
         addProduct({
             id: 16,
             categoryId: 0,
             categoryName: "Fruits",
-            name: "Mixed fruit juice",
+            productName: "Mixed fruit juice",
             priceInSBC: 400
         });
     }
