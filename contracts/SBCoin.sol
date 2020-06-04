@@ -13,6 +13,7 @@ contract SBCoin {
     string private _name;
     string private _symbol;
     uint8 private _decimals;
+    uint256 private _totalSupply;
 
     struct Product {
         uint24 id;
@@ -29,7 +30,6 @@ contract SBCoin {
     mapping(address => uint256) private balances;
 
     address private minter;
-    uint256 private _totalSupply = 1000000000000;
 
     //Product[] private availableProducts;
     mapping(uint24 => Product) private availableProducts;
@@ -62,12 +62,13 @@ contract SBCoin {
 
     constructor() public {
         minter = msg.sender;
-        // 100 SB-coin = 1 Euro
         // There are 10 billion Euro worth in SB-coins in total
-        balances[msg.sender] = _totalSupply;
+        //1 Euro == 1 SBC
+        _totalSupply = 10000000000;
         _name = "Saarbrücken Coin";
         _symbol = "SBC";
-        _decimals = 2;
+        _decimals = 4;
+        balances[msg.sender] = _totalSupply;
         create_products();
     }
 
@@ -138,10 +139,6 @@ contract SBCoin {
 
     function balanceOfInEth(address addr) public view returns (uint256) {
         return ConvertLib.convert(balanceOf(addr), 2);
-    }
-
-    function balanceOfInEuro(address addr) public view returns (uint256) {
-        return ConvertLib.convertToEuro(balanceOf(addr));
     }
 
     function getStoreAddress() public view returns (address) {
@@ -247,112 +244,112 @@ contract SBCoin {
             categoryId: 1,
             categoryName: "Meat",
             productName: "Red meat",
-            priceInSBC: 2000
+            priceInSBC: 20
         });
         addProduct({
             id: 2,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Banana",
-            priceInSBC: 300
+            priceInSBC: 3
         });
         addProduct({
             id: 3,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Guaba",
-            priceInSBC: 500
+            priceInSBC: 5
         });
         addProduct({
             id: 4,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Grapes",
-            priceInSBC: 1500
+            priceInSBC: 15
         });
         addProduct({
             id: 5,
             categoryId: 3,
             categoryName: "Fastfood",
             productName: "Double cheeseburguer",
-            priceInSBC: 2500
+            priceInSBC: 25
         });
         addProduct({
             id: 6,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Mango",
-            priceInSBC: 1500
+            priceInSBC: 15
         });
         addProduct({
             id: 7,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Watermelon",
-            priceInSBC: 1000
+            priceInSBC: 10
         });
         addProduct({
             id: 8,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Apple",
-            priceInSBC: 1100
+            priceInSBC: 11
         });
         addProduct({
             id: 9,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Cale owoce",
-            priceInSBC: 800
+            priceInSBC: 8
         });
         addProduct({
             id: 10,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Fried chicken drumsticks",
-            priceInSBC: 1000
+            priceInSBC: 10
         });
         addProduct({
             id: 11,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Orange juice",
-            priceInSBC: 400
+            priceInSBC: 4
         });
         addProduct({
             id: 12,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Mixed fruit pack",
-            priceInSBC: 2500
+            priceInSBC: 25
         });
         addProduct({
             id: 13,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Oranges",
-            priceInSBC: 600
+            priceInSBC: 6
         });
         addProduct({
             id: 14,
             categoryId: 2,
             categoryName: "Vegetables",
             productName: "Cabbage",
-            priceInSBC: 300
+            priceInSBC: 3
         });
         addProduct({
             id: 15,
             categoryId: 2,
             categoryName: "Vegetables",
             productName: "Bell pepper",
-            priceInSBC: 400
+            priceInSBC: 4
         });
         addProduct({
             id: 16,
             categoryId: 0,
             categoryName: "Fruits",
             productName: "Mixed fruit juice",
-            priceInSBC: 400
+            priceInSBC: 4
         });
     }
 }

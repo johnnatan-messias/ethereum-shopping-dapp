@@ -9,12 +9,12 @@ contract TestSBCoin {
     function testInitialBalanceUsingDeployedContract() public {
         SBCoin sbCoin = SBCoin(DeployedAddresses.SBCoin());
 
-        uint256 expected = 1000000000000;
+        uint256 expected = 10000000000;
 
         Assert.equal(
             sbCoin.balanceOf(msg.sender),
             expected,
-            "Owner should have 1000000000000 SBCoin initially"
+            "Owner should have 10000000000 SBCoin initially"
         );
     }
 /*
