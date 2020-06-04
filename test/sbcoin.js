@@ -80,8 +80,7 @@ contract('SBCoin', (accounts) => {
     const product = await sbCoinInstance.getProductById(21);
     const flag = product[0].toNumber() === 21 && product[1].toNumber() === 1 && product[2] === "Fruits" && product[3] === "Pear" && product[4].toNumber() === 50000;
     assert(flag, 'Product registered differs from the one we are expecting.');
-
-  })
+  });
 
   it('should buy the product with a productId=1', async () => {
     const sbCoinInstance = await SBCoin.deployed();
