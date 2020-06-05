@@ -310,7 +310,7 @@ contract SBCoin {
         addProduct({
             id: 10,
             categoryId: 0,
-            categoryName: "Fruits",
+            categoryName: "Meat",
             productName: "Fried chicken drumsticks",
             priceInSBC: 1000
         });
