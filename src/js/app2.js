@@ -44,7 +44,7 @@ function connect_to_blockchain2() {
 }
 
 function get_deployed_contract() {
-    var contract_address = "0x6626f2422096E6C05a9513446e3C5D94cdE79A36";
+    var contract_address = "0x4560F4e9c3183F1cB7d719815E04894130EC7028";
     //var contract_address = "0x6626f2422096E6C05a9513446e3C5D94cdE79A36";
     //var Contract = web3.eth.contract(contract_abi);
     //var contract_instance = Contract.at(contract_address);
@@ -59,14 +59,24 @@ function get_deployed_contract() {
 }
 
 function update_balance() {
-    contract_instance.getBalance.call(
-        web3.eth.accounts[0], function (err, result) {
-            if (err)
-                console.log(err);
-            var balance = parseInt(result)
-            $('span#wallet-balance').text('€ ' + sbc_to_eur(balance))
+    contract_instance.balanceOf.call(
+        web3.eth.accounts[0], function (error, result) {
+            if (error)
+                console.log(error);
+            else {
+                var balance = parseInt(result)
+                $('span#wallet-balance').text('€ ' + sbc_to_eur(balance));
+            }
         });
 }
+
+function getAvailableProducts() {
+    //to be implemented
+    contract_instance.getProductById.call(
+
+    );
+}
+
 
 function waitForReceipt(hash, cb) {
     web3.eth.getTransactionReceipt(hash, function (err, receipt) {
@@ -89,29 +99,54 @@ function waitForReceipt(hash, cb) {
     });
 }
 
-$(document).on('click', '#pay-for-product', function () {
-    var from_account = web3.eth.accounts[0];
-    var to_account = "0x2c892f27Da5B175B44772E97dBebEC9308ee38E2";
-    console.log('to-account', to_account);
-    console.log("from_account", from_account);
-    var value = $(this).attr("value");
-    var value_sbc = eur_to_sbc(value);
+$(document).on('click', '#buy-product', function () {
+    var customerAccount = web3.eth.accounts[0];
+    console.log("customerAccount", customerAccount);
 
-    contract_instance.sendCoin.sendTransaction.call({ from: from_account }, to_account, value_sbc,
-        function (error, txid) {
-            if (error) {
-                console.log('error', error);
-                alert("Transaction error");
-            }
-            else {
-                console.log('txid', txid)
-                alert("Transaction ID: " + txid)
-                waitForReceipt(txid, function (receipt) {
-                    console.log('Receipt', receipt);
-                    alert("Transaction confirmed and included in block " + receipt.blockNumber)
+    var productId = $(this).attr("value");
+    console.log('productId', productId);
+
+    contract_instance.getStoreAddress.call(function (error, storeAccount) {
+        if (error)
+            console.log(error);
+        else {
+            console.log('storeAccount', storeAccount);
+            contract_instance.buyProduct.sendTransaction.call({ from: customerAccount, to: storeAccount }, productId,
+                function (error, txid) {
+                    if (error) {
+                        console.log('error', error);
+                        alert("Transaction error");
+                    }
+                    else {
+                        console.log('txid', txid)
+                        alert("Transaction ID: " + txid)
+                        waitForReceipt(txid, function (receipt) {
+                            console.log('Receipt', receipt);
+                            alert("Transaction confirmed and included in block " + receipt.blockNumber)
+                        });
+                    }
                 });
-            }
-        });
+        }
+    });
+
+    /*
+        contract_instance.transfer.sendTransaction.call({ from: from_account }, to_account, value_sbc,
+            function (error, txid) {
+                if (error) {
+                    console.log('error', error);
+                    alert("Transaction error");
+                }
+                else {
+                    console.log('txid', txid)
+                    alert("Transaction ID: " + txid)
+                    waitForReceipt(txid, function (receipt) {
+                        console.log('Receipt', receipt);
+                        alert("Transaction confirmed and included in block " + receipt.blockNumber)
+                    });
+                }
+            });
+            */
+
 });
 
 
