@@ -13,6 +13,8 @@ window.addEventListener('load', async () => {
             console.log('net_version', web3.version.network);
             contract_instance = get_deployed_contract();
             update_balance();
+            getAvailableProducts();
+            getOwnedProducts();
             //web3.eth.sendTransaction({/* ... */});
         } catch (error) {
             alert(error);
@@ -71,10 +73,46 @@ function update_balance() {
 }
 
 function getAvailableProducts() {
-    //to be implemented
-    contract_instance.getProductById.call(
+    contract_instance.getTotalAvailableProducts.call(function (error, result) {
+        if (error)
+            console.log(error);
+        else {
+            var totalAvailableProducts = parseInt(result);
+            console.log('totalAvailableProducts', totalAvailableProducts)
+            for (i = 0; i < totalAvailableProducts; i++) {
+                var productId = i + 1;
+                contract_instance.getProductById.call(productId, function (error, product) {
+                    if (error) {
+                        console.log(productId, error);
+                    }
+                    else {
+                        console.log('Available:', 'productId=' + parseInt(product[0]) + '\tcategoryId=' + parseInt(product[1]) + '\tcategoryName=' + product[2] + '\tproductName=' + product[3] + '\tpriceInSBC=' + parseInt(product[4]));
+                    }
+                });
+            }
+        }
+    });
+}
 
-    );
+function getOwnedProducts() {
+    contract_instance.getTotalOwnedProducts.call(function (error, result) {
+        if (error)
+            console.log(error);
+        else {
+            var totalOwnedProducts = parseInt(result);
+            console.log('totalOwnedProducts', totalOwnedProducts)
+            for (productIndex = 0; productIndex < totalOwnedProducts; productIndex++) {
+                contract_instance.getOwnedProduct.call(productIndex, function (error, product) {
+                    if (error) {
+                        console.log(productIndex, error);
+                    }
+                    else {
+                        console.log('Owned:', 'productId=' + parseInt(product[0]) + '\tcategoryId=' + parseInt(product[1]) + '\tcategoryName=' + product[2] + '\tproductName=' + product[3] + '\tpriceInSBC=' + parseInt(product[4]));
+                    }
+                });
+            }
+        }
+    });
 }
 
 
