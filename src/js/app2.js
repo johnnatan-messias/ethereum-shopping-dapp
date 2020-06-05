@@ -15,6 +15,9 @@ window.addEventListener('load', async () => {
             update_balance();
             getAvailableProducts();
             getOwnedProducts();
+            window.ethereum.on('accountsChanged', function (accounts) {
+                location.reload();
+            });
             //web3.eth.sendTransaction({/* ... */});
         } catch (error) {
             alert(error);
