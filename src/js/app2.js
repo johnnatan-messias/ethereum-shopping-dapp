@@ -87,6 +87,9 @@ function getAvailableProducts() {
                     }
                     else {
                         console.log('Available:', 'productId=' + parseInt(product[0]) + '\tcategoryId=' + parseInt(product[1]) + '\tcategoryName=' + product[2] + '\tproductName=' + product[3] + '\tpriceInSBC=' + parseInt(product[4]));
+                        $(".featured__filter").append(
+                            '<div class="col-lg-3 col-md-4 col-sm-6 mix ' + product[2].toLowerCase() + '"><div class="featured__item"><div class="featured__item__pic set-bg" data-setbg="img/product/product-' + parseInt(product[0]) + '.jpg" style="background-image: url(&quot;img/product/product-' + parseInt(product[0]) + '.jpg&quot;);"><ul class="featured__item__pic__hover"><li><a href="#"><i class="fa fa-shopping-cart" id="buy-product" value="' + parseInt(product[0]) + '"></i></a></li></ul></div><div class="featured__item__text"><h6><a href="#">' + product[3] + '</a></h6><h5>€ ' + sbc_to_eur(parseInt(product[4])) + '</h5></div></div></div>'
+                        )
                     }
                 });
             }
@@ -108,6 +111,9 @@ function getOwnedProducts() {
                     }
                     else {
                         console.log('Owned:', 'productId=' + parseInt(product[0]) + '\tcategoryId=' + parseInt(product[1]) + '\tcategoryName=' + product[2] + '\tproductName=' + product[3] + '\tpriceInSBC=' + parseInt(product[4]));
+                        $(".owned-products-list").append(
+                            '<div class="col-lg-3 col-md-4 col-sm-6"><div class="owned__item"><div class="owned__item__pic set-bg" data-setbg="img/product/product-' + parseInt(product[0]) + '.jpg" style="background-image: url(&quot;img/product/product-' + parseInt(product[0]) + '.jpg&quot;);"></div><div class="owned__item__text"><h6><a href="#">' + product[3] + '</a></h6><h5>€ ' + sbc_to_eur(parseInt(product[4])) + '</h5></div></div></div>'
+                        )
                     }
                 });
             }

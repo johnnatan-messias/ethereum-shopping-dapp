@@ -29,6 +29,15 @@
             var containerEl = document.querySelector('.featured__filter');
             var mixer = mixitup(containerEl);
         }
+
+        $('.owned__controls li').on('click', function () {
+            $('.owned__controls li').removeClass('active');
+            $(this).addClass('active');
+        });
+        if ($('.owned__filter').length > 0) {
+            var containerEl = document.querySelector('.owned__filter');
+            var mixer = mixitup(containerEl);
+        }
     });
 
     /*------------------
